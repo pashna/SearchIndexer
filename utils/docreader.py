@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
-import document_pb2
-import struct
 import gzip
+import struct
 import sys
+
+import document_pb2
 
 
 class DocumentStreamReader:
@@ -27,7 +28,8 @@ class DocumentStreamReader:
 
 
 def main():
-    reader = DocumentStreamReader(sys.argv[1:])
+    arg = sys.argv[1:]
+    reader = DocumentStreamReader(sys.argv[1:][0])
     for doc in reader:
         print "%s\tbody: %d, text: %d" % (
             doc.url,
