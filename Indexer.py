@@ -1,6 +1,5 @@
 # coding: utf-8
 
-from VarByteEncoder import VarByteEncoder as vb
 import re
 
 class Indexer():
@@ -17,10 +16,12 @@ class Indexer():
         :param text:
         :return:
         """
+        text = text.lower()
         words = re.findall(self._regex, text)
-        return map(lambda s: s.lower(), words)
+        return list(set(words))
 
 
+    """
     def add_document_indexes(self, text, url):
         # TODO: Возможно, имеет смысл заменить ключи у word_list со строк на что-нибудь другое
         self.documents.append(url)
@@ -40,10 +41,33 @@ class Indexer():
                 self.r_index[word]["jump_table"] = {}
                 self.r_index[word]["last_doc"] = doc_id
 
+    """
 
+    def add_document_indexes(self, text, url):
+        # TODO: Возможно, имеет смысл заменить ключи у word_list со строк на что-нибудь другое
+        self.documents.append(url)
+        doc_id = len(self.documents)-1
+
+        word_list = self._split_text(text.lower())
+        for word in word_list:
+
+            if self.r_index.has_key(word):
+                #last_doc = self.r_index[word]["last_doc"]
+                #if last_doc != doc_id:
+                #self.r_index[word]["last_doc"] = doc_id
+                self.r_index[word]["docs"].append(doc_id)
+            else:
+                self.r_index[word] = {}
+                self.r_index[word]["docs"] = [doc_id]
+                #self.r_index[word]["jump_table"] = {}
+                #self.r_index[word]["last_doc"] = doc_id
+
+
+    """
     def encode_it(self):
         for word, word_struct in self.r_index.iteritems():
             word_struct["words"] = vb.encode(word_struct["words"])
+    """
 
-
-    
+    def and_search(self, word_list):
+        pass
