@@ -1,7 +1,9 @@
 # coding: utf-8
-import unittest
-from Optimizer import Optimizer
 import collections
+import unittest
+
+from Engine.Optimizer import Optimizer
+
 
 class OptimizerTest(unittest.TestCase):
 

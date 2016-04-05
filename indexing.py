@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from Indexer import Indexer
+from Engine.Indexer import Indexer
 from utils.docreader import DocumentStreamReader
 from utils.utils import save_obj
 
