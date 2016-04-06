@@ -1,3 +1,3 @@
 #!/bin/bash
 
-zcat "$@" | python Broder.py
+zcat "$@" | python indexing.py

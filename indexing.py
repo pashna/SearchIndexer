@@ -3,10 +3,11 @@
 from Engine.Indexer import Indexer
 from utils.docreader import DocumentStreamReader
 from utils.utils import save_obj
+import sys
 
 
 def get_reader():
-    reader = DocumentStreamReader("/home/popka/Sphere-Mail/2_term/Searching/3/HW/ts-idx-2016/dump_part001.gz")
+    reader = DocumentStreamReader(sys.stdin)
     return reader
 
 def create_indexes():
@@ -27,13 +28,6 @@ def create_indexes():
 if __name__ == "__main__":
 
     indexer = create_indexes()
-    #indexer.encode_it()
     save_obj(indexer.r_index, "indexer")
     save_obj(indexer.documents, "documents")
-
-    """
-    fsf = vb.encode_number(532)
-    c = fsf+vb.encode_number(1244)
-    #.append(vb.encode_number(4214))
-    print vb.decode(c)
-    """
+    print indexer.r_index["fit"]["docs"]

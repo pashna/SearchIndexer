@@ -6,6 +6,7 @@ from Engine.Searcher import Searcher
 
 class SearcherTests(unittest.TestCase):
 
+    """
     def search_test(self):
 
         optimizer = Optimizer()
@@ -25,3 +26,18 @@ class SearcherTests(unittest.TestCase):
         searcher = Searcher(r_index)
         docs = searcher.and_words("a", "b")
         123-12
+    """
+
+    def test_find_interval(self):
+        jump_values = [6, 13, 25, 80]
+        jump_step = 5
+        s = Searcher(r_index=None)
+
+        interval = s._find_interval(jump_values, 3, jump_step)
+        self.assertTrue(interval[0]==0 and interval[1]==5 and interval[2]==-1)
+
+        interval = s._find_interval(jump_values, 7, jump_step)
+        self.assertTrue(interval[0]==5 and interval[1]==10 and interval[2]==6)
+
+        interval = s._find_interval(jump_values, 88, jump_step)
+        self.assertTrue(interval[0]==20 and interval[1]==-1 and interval[2]==80)

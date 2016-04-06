@@ -14,15 +14,19 @@ class Optimizer():
         for word, word_struct in r_index.iteritems():
             doc_list = word_struct["docs"]
             prev_doc_id = doc_list[0]
-            word_struct["jump_table"] = {"jump_step": jump_step}
+            word_struct["jump_table"] = {"jump_step": jump_step,
+                                         #"jump_index": [],
+                                         "jump_values": []
+                                         }
 
             for i in range(1, len(doc_list)):
+                if i%jump_step == 0:
+                    word_struct["jump_table"]["jump_values"].append(doc_list[i])
+
                 delta = doc_list[i] - prev_doc_id
                 prev_doc_id = doc_list[i]
                 doc_list[i] = delta
 
-                if i%jump_step == 0:
-                    word_struct["jump_table"][i] = prev_doc_id
 
             word_struct["max_doc_id"] = prev_doc_id
 

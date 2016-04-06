@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from Engine.VarByteEncoder import VarByteEncoder as vb
+from bisect import bisect
 
 class Searcher():
 
@@ -39,14 +40,14 @@ class Searcher():
 
         return result_docs
 
-
+    """
     def _find_doc(self, doc_id, docs, jump_table):
-        """
+
         Ищем doc_id в docs с помощью jumb_table
         :param doc_id:
         :param docs:
         :param jump_table:
-        """
+
         jump_step = jump_table["jump_step"]
         step_count = doc_id/jump_step
 
@@ -56,6 +57,7 @@ class Searcher():
         if left_border_value == 0:
             # может быть в первом сегменте
             left_border_index = 0
+            left_border_value = docs[0]
         elif jump_table.has_key(left_border_value):
             #
             left_border_index = jump_table[left_border_value]
@@ -76,7 +78,35 @@ class Searcher():
                 return True
 
         return False
+    """
+
+    def _find_doc(self, doc_id, docs, jump_table):
+        jump_values = jump_table["jump_values"]
+        jump_step = jump_table["jump_step"]
+        left_border, right_border, left_value = self._find_interval(jump_values, doc_id, jump_step)
+
+        if right_border == -1:
+            right_border = len(docs)
+
+        if left_value == -1:
+            left_value = docs[0]
+
+        prev_doc_id = left_value - docs[left_border]# это нужно, чтобы работал цикл for
+        for i in range(left_border, right_border):
+            real_doc_id = docs[i] + prev_doc_id
+            prev_doc_id = real_doc_id
+            if doc_id == real_doc_id:
+                return True
 
 
 
 
+    def _find_interval(self, jump_values, value, jump_step):
+        #result_index = bisect.bisect(jump_values, value)
+        result_index = next((jump_values.index(n) for n in jump_values if n > value), len(jump_values))
+        if result_index == 0:
+            return (result_index)*jump_step, (result_index+1)*jump_step, -1
+        if result_index < len(jump_values):
+            return result_index*jump_step, (result_index+1)*jump_step, jump_values[result_index-1]
+        else:
+            return result_index*jump_step, -1, jump_values[-1]
