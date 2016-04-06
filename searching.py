@@ -1,32 +1,52 @@
-from utils.utils import load_obj
+#!/usr/bin/env python
+# coding: utf-8
+
+import fileinput
+
 from Engine.Searcher import Searcher
-import sys
+from utils.utils import load_obj, print_error
 
-if __name__ == "__main__":
-
-    requests = []
-    for line in sys.stdin:
-        line = line.replace("\n", "")
-        requests.append(line.split(' & '))
-
+def main():
     r_index = load_obj("optimized_index")
     searcher = Searcher(r_index)
-    result_doc_matrix = []
-
-    for request in requests:
-       result_doc_matrix.append(searcher.and_words(request[0], request[1]))
-
-    r_index = None
-    searcher = None
-
     docs = load_obj("documents")
-    for result_docs in result_doc_matrix:
-        print len(result_docs)
-        for doc_id in result_docs:
+    #print_error("readed")
+
+    for line in fileinput.input():
+        # TODO всю строку сразу в uft-8 и lower
+        line = line.replace("\n", "")
+        if '&' in line:
+            request = line.split(' & ')
+            print_error(request[0])
+            print_error(request[1])
+            doc_result = searcher.and_words(unicode(request[0], 'utf-8').lower(), unicode(request[1], 'utf-8').lower())
+        else:
+            doc_result = searcher.find_word(unicode(line, 'utf-8').lower())
+
+        print line
+        print len(doc_result)
+        for doc_id in doc_result:
             print docs[doc_id]
 
+def test_main(line):
+    r_index = load_obj("optimized_index")
+    searcher = Searcher(r_index)
+    docs = load_obj("documents")
+    print("readed")
 
-    """
-    print len(r_index["fit"]["docs"])
-    print searcher.and_words("fit", "fit")
-    """
+    if '&' in line:
+        request = line.split(' & ')
+        print(request[0])
+        print(request[1])
+        doc_result = searcher.and_words(unicode(request[0], 'utf-8').lower(), unicode(request[1], 'utf-8').lower())
+    else:
+        print line
+        doc_result = searcher.find_word(unicode(line, 'utf-8').lower())
+
+    print len(doc_result)
+    for doc_id in doc_result:
+        print docs[doc_id]
+
+if __name__ == "__main__":
+    main()
+    #test_main("Шенгенское & соглашение")

@@ -1,4 +1,5 @@
 # coding: utf-8
+
 from VarByteEncoder import VarByteEncoder as vb
 
 class Optimizer():
@@ -6,7 +7,7 @@ class Optimizer():
     @staticmethod
     def create_jump_table(r_index, jump_step=2, count_of_step=None):
         """
-        Функция переводит массив документов в массив приращений(дельт), и строит jump_table
+        Function convert list of documents_id to list of delta. After it builds jump_table
         :param r_index:
         :param jump_step:
         """
@@ -37,4 +38,3 @@ class Optimizer():
     def encode_it(r_index):
         for word, word_struct in r_index.iteritems():
             word_struct["docs"] = vb.encode(word_struct["docs"])
-            decoded = vb.decode(word_struct["docs"])

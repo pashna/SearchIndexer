@@ -1,10 +1,10 @@
+#!/usr/bin/env python
 # coding: utf-8
 
 from Engine.Indexer import Indexer
 from utils.docreader import DocumentStreamReader
 from utils.utils import save_obj
 import sys
-
 
 def get_reader():
     reader = DocumentStreamReader(sys.stdin)
@@ -30,4 +30,3 @@ if __name__ == "__main__":
     indexer = create_indexes()
     save_obj(indexer.r_index, "indexer")
     save_obj(indexer.documents, "documents")
-    print indexer.r_index["fit"]["docs"]

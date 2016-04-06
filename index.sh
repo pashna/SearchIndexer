@@ -1,3 +1,3 @@
 #!/bin/bash
 
-zcat "$@" | python indexing.py
+zcat "$2" | python indexing.py

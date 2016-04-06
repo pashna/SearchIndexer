@@ -1,6 +1,10 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 from Engine.Optimizer import Optimizer
 from utils.utils import load_obj
 from utils.utils import save_obj
+from utils.utils import print_error
 
 if __name__ == "__main__":
     optimizer = Optimizer()
