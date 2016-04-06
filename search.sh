@@ -1,3 +1,3 @@
 #!/bin/bash
 
-python searching.py "$@"
+echo "$@" | python searching.py
