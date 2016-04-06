@@ -8,11 +8,15 @@ import document_pb2
 
 
 class DocumentStreamReader:
-    def __init__(self, path):
+    def __init__(self, stream):
+
+        self.stream = stream
+        """
         if path.endswith('.gz'):
             self.stream = gzip.open(path, 'rb')
         else:
             self.stream = open(path, 'rb')
+        """
 
     def __iter__(self):
         while True:

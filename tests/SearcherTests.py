@@ -21,6 +21,7 @@ class SearcherTests(unittest.TestCase):
             }
 
         r_index = optimizer.create_jump_table(r_index, jump_step=3)
+        optimizer.encode_it(r_index)
         searcher = Searcher(r_index)
         docs = searcher.and_words("a", "b")
         123-12

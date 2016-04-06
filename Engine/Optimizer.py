@@ -33,3 +33,4 @@ class Optimizer():
     def encode_it(r_index):
         for word, word_struct in r_index.iteritems():
             word_struct["docs"] = vb.encode(word_struct["docs"])
+            decoded = vb.decode(word_struct["docs"])

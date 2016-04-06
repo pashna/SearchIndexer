@@ -17,9 +17,9 @@ class VarByteEncoder():
 
     @staticmethod
     def encode(numbers):
-        bytes = []
+        bytes = ""
         for n in numbers:
-            bytes.extend(VarByteEncoder.encode_number(n))
+            bytes += VarByteEncoder.encode_number(n)
         return bytes
         #return pack('%dB' % len(bytes), *bytes)
 

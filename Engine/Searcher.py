@@ -1,4 +1,7 @@
 # coding: utf-8
+
+from Engine.VarByteEncoder import VarByteEncoder as vb
+
 class Searcher():
 
     def __init__(self, r_index):
@@ -20,6 +23,10 @@ class Searcher():
             jump_table_2 = w2_struct["jump_table"]
             docs_1 = w1_struct["docs"]
             docs_2 = w2_struct["docs"]
+
+        # Декодируем
+        docs_1 = vb.decode(docs_1)
+        docs_2 = vb.decode(docs_2)
 
         result_docs = []
         prev_doc = 0
