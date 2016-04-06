@@ -52,6 +52,25 @@ class Searcher():
         return result_docs
 
 
+    def and_word_and_docs(self, docs_1, w2):
+        if self.r_index.has_key(w2):
+            w2_struct = self.r_index[w2]
+        else:
+            return []
+
+        jump_table_2 = w2_struct["jump_table"]
+        docs_2 = w2_struct["docs"]
+        docs_2 = vb.decode(docs_2)
+
+        result_docs = []
+        for i in range(len(docs_1)):
+            doc_id = docs_1[i]
+            if (self._find_doc(doc_id, docs_2, jump_table_2)):
+                result_docs.append(doc_id)
+
+        return result_docs
+
+
     def _find_doc(self, doc_id, docs, jump_table):
         jump_values = jump_table["jump_values"]
         jump_step = jump_table["jump_step"]
@@ -95,3 +114,11 @@ class Searcher():
             result_docs.append(real_doc_id)
 
         return result_docs
+
+
+    def and_word_list(self, words):
+        docs = self.and_words(words[0], words[1])
+        for w in words[2:]:
+            docs = self.and_word_and_docs(docs, w)
+
+        return docs
