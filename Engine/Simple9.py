@@ -7,6 +7,7 @@ class Simple9():
     max_length = [28, 14, 9, 7, 5, 4, 3, 2, 1]
     shift = [1, 2, 3, 4, 5, 7, 9, 14, 28]
     value_mask = (1<<28)-1
+    max_int = 268435455
 
     """
     schemes = [9, 8, 7, 6, 5, 4, 3, 2, 1]
@@ -21,16 +22,16 @@ class Simple9():
         encoded = ""
         while(i < len(numbers)):
             scheme, count_of_numbers = self._choice_type(numbers[i:])
-            if scheme == -1:
+
+            encoded += self.encode_numbers(numbers[i:i+count_of_numbers], scheme)
+            i += count_of_numbers
+            """
+            else:
                 # Остаются пробелы, нельзя разместить полностью - нужно вносить избыточность
                 for j in range(i, len(numbers)):
                     encoded += self.encode_numbers(numbers[j:j+1], 8)
+            """
 
-                break
-
-            print scheme, count_of_numbers
-            encoded += self.encode_numbers(numbers[i:i+count_of_numbers], scheme)
-            i += count_of_numbers
 
         return encoded
 
@@ -39,6 +40,8 @@ class Simple9():
 
         length = Simple9.shift[scheme]
         for n in numbers:
+            if n > Simple9.max_int:
+                n = 0
             encoded = encoded << length
             encoded += n
 
@@ -107,7 +110,11 @@ class Simple9():
             if i < len(n_lst):
                 number = n_lst[i]
             else:
-                return -1, -1
+                # Если не удается закодировать все - кодируем только одно число
+                return 8, 1
+
+            if number > Simple9.max_int:
+                number = 0
 
             result_index = next((Simple9.max_values.index(n) for n in Simple9.max_values if n >= number), len(Simple9.max_values))
             if result_index > current_scheme:
@@ -136,4 +143,4 @@ if __name__ == "__main__":
     s = Simple9()
     enc = s.encode([5523123, 123, 12, 32])
     print s.decode(enc)
-    simple9_script_generator()
+    #simple9_script_generator()
