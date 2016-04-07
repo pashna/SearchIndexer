@@ -1,12 +1,13 @@
 # coding: utf-8
 
-from Engine.VarByteEncoder import VarByteEncoder as vb
+#from Engine.VarByteEncoder import VarByteEncoder as vb
 from utils.utils import print_error
 
 class Searcher():
 
-    def __init__(self, r_index):
+    def __init__(self, r_index, encoder):
         self.r_index = r_index
+        self.encoder = encoder
 
 
     def and_words(self, w1, w2):
@@ -37,8 +38,8 @@ class Searcher():
             docs_2 = w2_struct["docs"]
 
         # Decoding
-        docs_1 = vb.decode(docs_1)
-        docs_2 = vb.decode(docs_2)
+        docs_1 = self.encoder.decode(docs_1)
+        docs_2 = self.encoder.decode(docs_2)
 
         result_docs = []
         prev_doc = 0
@@ -60,7 +61,7 @@ class Searcher():
 
         jump_table_2 = w2_struct["jump_table"]
         docs_2 = w2_struct["docs"]
-        docs_2 = vb.decode(docs_2)
+        docs_2 = self.encoder.decode(docs_2)
 
         result_docs = []
         for i in range(len(docs_1)):
@@ -104,7 +105,7 @@ class Searcher():
     def find_word(self, w):
         w_struct = self.r_index[w]
         docs = w_struct["docs"]
-        docs = vb.decode(docs)
+        docs = self.encoder.decode(docs)
         prev_doc = 0
         result_docs = []
         for d in docs:

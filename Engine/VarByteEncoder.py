@@ -4,8 +4,8 @@ from struct import pack, unpack
 
 class VarByteEncoder():
 
-    @staticmethod
-    def encode_number(number):
+
+    def encode_number(self, number):
         bytes = []
         while True:
             bytes.insert(0, number % 128)
@@ -17,17 +17,16 @@ class VarByteEncoder():
         #return bytes
         return pack('%dB' % len(bytes), *bytes)
 
-    @staticmethod
-    def encode(numbers):
+
+    def encode(self, numbers):
         bytes = ""
         for n in numbers:
-            bytes += VarByteEncoder.encode_number(n)
+            bytes += self.encode_number(n)
         return bytes
         #return pack('%dB' % len(bytes), *bytes)
 
 
-    @staticmethod
-    def decode(bytestream):
+    def decode(self, bytestream):
         bytestream = unpack('%dB' % len(bytestream), bytestream)
         old_radix = 0
         numbers = []

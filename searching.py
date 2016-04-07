@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+from Engine.VarByteEncoder import VarByteEncoder
+from Engine.Simple9 import Simple9
 import fileinput
 
 from Engine.Searcher import Searcher
@@ -8,7 +10,7 @@ from utils.utils import load_obj, print_error
 
 def main():
     r_index = load_obj("optimized_index")
-    searcher = Searcher(r_index)
+    searcher = Searcher(r_index, Simple9())
     docs = load_obj("documents")
     #print_error("readed")
 
@@ -33,7 +35,7 @@ def main():
 
 def test_main(line):
     r_index = load_obj("optimized_index")
-    searcher = Searcher(r_index)
+    searcher = Searcher(r_index, Simple9())
     docs = load_obj("documents")
     print("readed")
 
@@ -52,5 +54,5 @@ def test_main(line):
         print docs[doc_id]
 
 if __name__ == "__main__":
-    main()
-    #test_main("власти & США & конфликт")
+    #main()
+    test_main("власти & США & конфликт")

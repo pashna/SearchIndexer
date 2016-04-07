@@ -6,6 +6,7 @@ class Simple9():
     max_values = [1, 3, 7, 15, 31, 127, 511, 16383, 268435455]
     max_length = [28, 14, 9, 7, 5, 4, 3, 2, 1]
     shift = [1, 2, 3, 4, 5, 7, 9, 14, 28]
+    margin = [0, 0, 1, 0, 3, 0, 1, 0, 0]
     value_mask = (1<<28)-1
     max_int = 268435455
 
@@ -25,13 +26,6 @@ class Simple9():
 
             encoded += self.encode_numbers(numbers[i:i+count_of_numbers], scheme)
             i += count_of_numbers
-            """
-            else:
-                # Остаются пробелы, нельзя разместить полностью - нужно вносить избыточность
-                for j in range(i, len(numbers)):
-                    encoded += self.encode_numbers(numbers[j:j+1], 8)
-            """
-
 
         return encoded
 
@@ -44,7 +38,7 @@ class Simple9():
                 n = 0
             encoded = encoded << length
             encoded += n
-
+        encoded = encoded << Simple9.margin[scheme]
         return pack('=I', encoded)
 
 
@@ -80,19 +74,19 @@ class Simple9():
         return [(number&201326592)>>26, (number&50331648)>>24, (number&12582912)>>22, (number&3145728)>>20, (number&786432)>>18, (number&196608)>>16, (number&49152)>>14, (number&12288)>>12, (number&3072)>>10, (number&768)>>8, (number&192)>>6, (number&48)>>4, (number&12)>>2, (number&3)>>0, ]
 
     def _decode_number_2(self, number):
-        return [(number&117440512)>>24, (number&14680064)>>21, (number&1835008)>>18, (number&229376)>>15, (number&28672)>>12, (number&3584)>>9, (number&448)>>6, (number&56)>>3, (number&7)>>0, ]
+        return [(number&234881024)>>25, (number&29360128)>>22, (number&3670016)>>19, (number&458752)>>16, (number&57344)>>13, (number&7168)>>10, (number&896)>>7, (number&112)>>4, (number&14)>>1, ]
 
     def _decode_number_3(self, number):
         return [(number&251658240)>>24, (number&15728640)>>20, (number&983040)>>16, (number&61440)>>12, (number&3840)>>8, (number&240)>>4, (number&15)>>0, ]
 
     def _decode_number_4(self, number):
-        return [(number&32505856)>>20, (number&1015808)>>15, (number&31744)>>10, (number&992)>>5, (number&31)>>0, ]
+        return [(number&260046848)>>23, (number&8126464)>>18, (number&253952)>>13, (number&7936)>>8, (number&248)>>3, ]
 
     def _decode_number_5(self, number):
         return [(number&266338304)>>21, (number&2080768)>>14, (number&16256)>>7, (number&127)>>0, ]
 
     def _decode_number_6(self, number):
-        return [(number&133955584)>>18, (number&261632)>>9, (number&511)>>0, ]
+        return [(number&267911168)>>19, (number&523264)>>10, (number&1022)>>1, ]
 
     def _decode_number_7(self, number):
         return [(number&268419072)>>14, (number&16383)>>0, ]
@@ -132,10 +126,11 @@ def simple9_script_generator():
         max_value = Simple9.max_values[j]
         shift = Simple9.shift[j]
         max_length = Simple9.max_length[j]
+        margin = Simple9.margin[j]
         script = "def _decode_number_{}(self, number):\n".format(j)
         script += "    return ["
         for i in reversed(range(max_length)):
-            script += "(number&{})>>{}, ".format(max_value << shift*i, shift*i)
+            script += "(number&{})>>{}, ".format(max_value << shift*i+margin, shift*i+margin)
         script += "]\n"
         print script
 
@@ -143,4 +138,4 @@ if __name__ == "__main__":
     s = Simple9()
     enc = s.encode([5523123, 123, 12, 32])
     print s.decode(enc)
-    #simple9_script_generator()
+    simple9_script_generator()

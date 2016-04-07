@@ -1,11 +1,12 @@
 # coding: utf-8
 
-from VarByteEncoder import VarByteEncoder as vb
-
 class Optimizer():
 
-    @staticmethod
-    def create_jump_table(r_index, jump_step=2, count_of_step=None):
+    def __init__(self, encoder):
+        self.encoder = encoder
+
+
+    def create_jump_table(self, r_index, jump_step=2, count_of_step=None):
         """
         Function convert list of documents_id to list of delta. After it builds jump_table
         :param r_index:
@@ -34,7 +35,6 @@ class Optimizer():
         return r_index
 
 
-    @staticmethod
-    def encode_it(r_index):
+    def encode_it(self, r_index):
         for word, word_struct in r_index.iteritems():
-            word_struct["docs"] = vb.encode(word_struct["docs"])
+            word_struct["docs"] = self.encoder.encode(word_struct["docs"])
