@@ -54,5 +54,5 @@ def test_main(line):
         print docs[doc_id]
 
 if __name__ == "__main__":
-    #main()
-    test_main("власти & США & конфликт")
+    main()
+    #test_main("власти & США & конфликт")
