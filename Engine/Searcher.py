@@ -100,7 +100,11 @@ class Searcher():
 
 
     def find_word(self, w):
-        w_struct = self.r_index[w]
+        if self.r_index.has_key(w):
+            w_struct = self.r_index[w]
+        else:
+            print "NO", w
+            return []
         docs = w_struct["docs"]
         docs = self.encoder.decode(docs)
         prev_doc = 0

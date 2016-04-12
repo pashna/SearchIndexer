@@ -9,9 +9,7 @@ from utils.utils import print_error
 
 if __name__ == "__main__":
     optimizer = Optimizer(Simple9())
-    #full_r_index = load_obj("indexer")
     r_index = load_obj("indexer")
-    #for letter, r_index in full_r_index.iteritems():
-    r_index = optimizer.create_jump_table(r_index=r_index, jump_step=300)
+    r_index = optimizer.create_jump_table(r_index=r_index, jump_step=400)
     optimizer.encode_it(r_index)
     save_obj(r_index, "optimized_index")

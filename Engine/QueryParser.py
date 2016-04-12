@@ -5,7 +5,7 @@ from Engine.Searcher import Searcher
 
 class QueryExecutor():
 
-    STR_ELEMENTS = ["!", "&", "|"]
+    STR_ELEMENTS = ["!", "&", "|", "(", ")"]
 
     def __init__(self, searcher):
         self.searcher = searcher
@@ -87,7 +87,11 @@ OPERATORS = {
 
 
     def query(self, text):
-        return self.calc(self.shunting_yard(self.preprocess(text)))
+        result = self.calc(self.shunting_yard(self.preprocess(text)))
+        if isinstance(result, list):
+            return result
+        else:
+            return self.searcher.find_word(result)
 
     def preprocess(self, q):
         q = q.replace(' ', '')
@@ -111,7 +115,7 @@ for i in shunting_yard(parse(u"власти&(бельгии|парижа)*тер
     print i
 """
 
-
+"""
 optimizer = Optimizer(Simple9())
 r_index = \
     {
@@ -129,8 +133,12 @@ optimizer.encode_it(r_index)
 searcher = Searcher(r_index, Simple9())
 
 q = QueryExecutor(searcher)
-print q.query(u"b & !a")
+for i in q.shunting_yard(q.parse("путин&(россия|крым)")):
+    print i
+"""
+#print q.query(u"b & !a")
 #print calc(shunting_yard(preprocess(u"!теракт&власти&(бельгии|парижа)&!путин")))
+
 """
 for i in preprocess(u"!теракт&власти&(бельгии|парижа)&!путин"):
     print i
