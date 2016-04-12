@@ -1,7 +1,7 @@
 # coding: utf-8
 
 #from Engine.VarByteEncoder import VarByteEncoder as vb
-from utils.utils import print_error
+#from utils.utils import print_error
 
 class Searcher():
 
@@ -10,11 +10,8 @@ class Searcher():
         self.encoder = encoder
 
 
-    def and_words(self, w1, w2):
-        #w1 = repr(w1.decode('unicode-escape'))
-        #w2 = repr(w2.decode('unicode-escape'))
-        #print_error(w1)
-        #print_error(w2)
+    def _and_words(self, w1, w2):
+
         if self.r_index.has_key(w1):
             w1_struct = self.r_index[w1]
         else:
@@ -109,7 +106,7 @@ class Searcher():
         prev_doc = 0
         result_docs = []
         for d in docs:
-            print_error(d)
+            #print_error(d)
             real_doc_id = prev_doc + d
             prev_doc = real_doc_id
             result_docs.append(real_doc_id)
@@ -118,8 +115,96 @@ class Searcher():
 
 
     def and_word_list(self, words):
-        docs = self.and_words(words[0], words[1])
-        for w in words[2:]:
-            docs = self.and_word_and_docs(docs, w)
+        #docs = self._and_words(words[0], words[1])
+        w1 = words[0]
+        for w in words[1:]:
+            w2 = w
+            w1 = self.and_(w1, w2)
 
-        return docs
+        return w1
+
+
+
+    def and_(self, w1, w2):
+        """
+        AND
+        :param w1: [doc_1, doc_2, ...] or STR
+        :param w2: [doc_1, doc_2, ...] or STR
+        """
+        if not isinstance(w1, list) and not isinstance(w2, list):
+            return self._and_words(w1, w2)
+
+        if isinstance(w1, list) and not isinstance(w2, list):
+            return self.and_word_and_docs(w1, w2)
+
+        if not isinstance(w1, list) and isinstance(w2, list):
+            return self.and_word_and_docs(w2, w1)
+
+        if isinstance(w1, list) and isinstance(w2, list):
+            return sorted(list(set(w1) & set(w2)))
+
+
+
+
+    def or_(self, w1, w2):
+        """
+        OR
+        :param w1: [doc_1, doc_2, ...] or STR
+        :param w2: [doc_1, doc_2, ...] or STR
+        """
+        if not isinstance(w1, list) and not isinstance(w2, list):
+            docs_1 = self.find_word(w1)
+            docs_2 = self.find_word(w2)
+
+        if isinstance(w1, list) and not isinstance(w2, list):
+            docs_1 = w1
+            docs_2 = self.find_word(w2)
+
+        if not isinstance(w1, list) and isinstance(w2, list):
+            docs_1 = self.find_word(w1)
+            docs_2 = w1
+
+        if isinstance(w1, list) and isinstance(w2, list):
+            docs_1 = w1
+            docs_2 = w2
+
+        docs_1.extend(docs_2)
+
+        return sorted(list(set(docs_1)))
+
+
+
+    def and_not(self, w1, w2):
+        """
+        w1 and not w2
+        :param w1:
+        :param w2:
+        """
+        # Сделаю пока лениво
+        if not isinstance(w1, list) and not isinstance(w2, list):
+            docs_1 = self.find_word(w1)
+            docs_2 = self.find_word(w2)
+
+        if isinstance(w1, list) and not isinstance(w2, list):
+            docs_1 = w1
+            docs_2 = self.find_word(w2)
+
+        if not isinstance(w1, list) and isinstance(w2, list):
+            docs_1 = self.find_word(w1)
+            docs_2 = w1
+
+        if isinstance(w1, list) and isinstance(w2, list):
+            docs_1 = w1
+            docs_2 = w2
+
+
+        return sorted(list(set(docs_1)-set(docs_2)))
+
+
+    def not_and(self, w1, w2):
+        """
+        not w1 and w2
+        :param w1:
+        :param w2:
+        """
+        return self.and_not(w2, w1)
