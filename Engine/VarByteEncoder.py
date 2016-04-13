@@ -12,9 +12,7 @@ class VarByteEncoder():
             if number < 128:
                 break
             number /= 128
-
         bytes[-1] += 128
-        #return bytes
         return pack('%dB' % len(bytes), *bytes)
 
 
@@ -23,19 +21,17 @@ class VarByteEncoder():
         for n in numbers:
             bytes += self.encode_number(n)
         return bytes
-        #return pack('%dB' % len(bytes), *bytes)
 
 
     def decode(self, bytestream):
-        bytestream = unpack('%dB' % len(bytestream), bytestream)
-        old_radix = 0
+        n = 0
         numbers = []
-
+        bytestream = unpack('%dB' % len(bytestream), bytestream)
         for byte in bytestream:
             if byte < 128:
-                old_radix = byte
+                n = 128 * n + byte
             else:
-                n = 128 * old_radix + (byte - 128)
+                n = 128 * n + (byte - 128)
                 numbers.append(n)
-                old_radix = 0
+                n = 0
         return numbers

@@ -12,6 +12,8 @@ class Optimizer():
         :param r_index:
         :param jump_step:
         """
+        encoding = r_index["encoding"]
+        del r_index['encoding']
 
         for word, word_struct in r_index.iteritems():
             doc_list = word_struct["docs"]
@@ -32,9 +34,11 @@ class Optimizer():
 
             word_struct["max_doc_id"] = prev_doc_id
 
+        r_index["encoding"] = encoding
         return r_index
 
 
     def encode_it(self, r_index):
         for word, word_struct in r_index.iteritems():
-            word_struct["docs"] = self.encoder.encode(word_struct["docs"])
+            if word != "encoding":
+                word_struct["docs"] = self.encoder.encode(word_struct["docs"])

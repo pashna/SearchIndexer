@@ -2,34 +2,36 @@
 
 #from Engine.VarByteEncoder import VarByteEncoder as vb
 #from utils.utils import print_error
+from indexing import COUNT_OF_FILES
+from utils.utils import load_obj, print_error
+from Engine.VarByteEncoder import VarByteEncoder
+from Engine.Simple9 import Simple9
+import mmh3
 
 class Searcher():
 
-    def __init__(self, r_index, encoder):
-        self.r_index = r_index
-        self.encoder = encoder
+    def __init__(self):
+        self.r_index = {}#r_index
+        self.encoder = None
 
 
     def _and_words(self, w1, w2):
 
-        if self.r_index.has_key(w1):
-            w1_struct = self.r_index[w1]
-        else:
+
+        w1_struct = self.get_word_struct(w1)#r_index[w1]
+        if w1_struct is None:
             return []
 
-        if self.r_index.has_key(w2):
-            w2_struct = self.r_index[w2]
-        else:
+        w2_struct = self.get_word_struct(w2)#r_index[w2]
+        if w2_struct is None:
             return []
 
         # Let docs_1 be smaller than docs_2
         if len(w1_struct["docs"]) > len(w2_struct["docs"]):
-            #jump_table_1 = w2_struct["jump_table"]
             jump_table_2 = w1_struct["jump_table"]
             docs_1 = w2_struct["docs"]
             docs_2 = w1_struct["docs"]
         else:
-            #jump_table_1 = w1_struct["jump_table"]
             jump_table_2 = w2_struct["jump_table"]
             docs_1 = w1_struct["docs"]
             docs_2 = w2_struct["docs"]
@@ -50,10 +52,27 @@ class Searcher():
         return result_docs
 
 
-    def and_word_and_docs(self, docs_1, w2):
-        if self.r_index.has_key(w2):
-            w2_struct = self.r_index[w2]
+    def get_word_struct(self, w):
+        w = w.encode('utf-8')
+        __w_hash = mmh3.hash(w) % COUNT_OF_FILES
+
+        if not self.r_index.has_key(__w_hash%COUNT_OF_FILES):
+            self.r_index[__w_hash] = load_obj("optimized_index_"+str(__w_hash))
+
+        if self.encoder is None:
+            if self.r_index[__w_hash]['encoding'] == 'varbyte':
+                self.encoder = VarByteEncoder()
+            else:
+                self.encoder = Simple9()
+
+        if self.r_index[__w_hash].has_key(w):
+            return self.r_index[__w_hash][w]
         else:
+            return None
+
+    def and_word_and_docs(self, docs_1, w2):
+        w2_struct = self.get_word_struct(w2)#r_index[w]
+        if w2_struct is None:
             return []
 
         jump_table_2 = w2_struct["jump_table"]
@@ -89,7 +108,7 @@ class Searcher():
 
 
     def _find_interval(self, jump_values, value, jump_step):
-        #result_index = bisect.bisect(jump_values, value)
+
         result_index = next((jump_values.index(n) for n in jump_values if n > value), len(jump_values))
         if result_index == 0:
             return 0, jump_step, -1
@@ -100,17 +119,17 @@ class Searcher():
 
 
     def find_word(self, w):
-        if self.r_index.has_key(w):
-            w_struct = self.r_index[w]
-        else:
-            print "NO", w
+        #if self.r_index.has_key(w):
+        w_struct = self.get_word_struct(w)#r_index[w]
+        if w_struct is None:
             return []
+
         docs = w_struct["docs"]
         docs = self.encoder.decode(docs)
         prev_doc = 0
         result_docs = []
         for d in docs:
-            #print_error(d)
+
             real_doc_id = prev_doc + d
             prev_doc = real_doc_id
             result_docs.append(real_doc_id)
@@ -119,7 +138,7 @@ class Searcher():
 
 
     def and_word_list(self, words):
-        #docs = self._and_words(words[0], words[1])
+
         w1 = words[0]
         for w in words[1:]:
             w2 = w
