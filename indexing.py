@@ -25,10 +25,7 @@ def create_indexes(encoding):
         doc_text = doc.text if doc.HasField('text') else 0
 
         if doc_text != 0:
-            try:
-                indexer.add_document_indexes(text=doc_text, url=doc_url)
-            except Exception as e:
-                traceback.print_exc()
+            indexer.add_document_indexes(text=doc_text, url=doc_url)
 
     return indexer
 

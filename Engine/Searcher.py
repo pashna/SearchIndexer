@@ -119,7 +119,7 @@ class Searcher():
 
 
     def find_word(self, w):
-        #if self.r_index.has_key(w):
+
         w_struct = self.get_word_struct(w)#r_index[w]
         if w_struct is None:
             return []

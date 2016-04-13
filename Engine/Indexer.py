@@ -54,19 +54,3 @@ class Indexer():
             except Exception as e:
                 print "EXCEPRION", word
                 traceback.print_exc()
-
-            #for word in word_list:
-            """
-            first_letter = word[0]
-            if self.r_index.has_key(first_letter):
-                letter_dict = self.r_index[first_letter]
-            else:
-                letter_dict = {}
-                self.r_index[first_letter] = letter_dict
-
-            if letter_dict.has_key(word):
-                letter_dict[word]["docs"].append(doc_id)
-            else:
-                letter_dict[word] = {}
-                letter_dict[word]["docs"] = [doc_id]
-            """
